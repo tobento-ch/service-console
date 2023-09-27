@@ -65,17 +65,6 @@ abstract class AbstractCommand implements CommandInterface
     }
     
     /**
-     * Handle the command.
-     *
-     * @param InteractorInterface $io
-     * @return int The exit status code: 
-     *     0 SUCCESS
-     *     1 FAILURE If some error happened during the execution
-     *     2 INVALID To indicate incorrect command usage e.g. invalid options
-     */
-    abstract public function handle(InteractorInterface $io): int;
-    
-    /**
      * Returns the command name.
      *
      * @return string
