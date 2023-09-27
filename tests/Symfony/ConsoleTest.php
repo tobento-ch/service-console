@@ -98,6 +98,20 @@ class ConsoleTest extends TestCase
         $this->assertSame('arg:foo opt:bar', $executed->output());
     }
     
+    public function testExecuteMethodWithCommandClassWithDependency()
+    {
+        $console = new Console(name: 'app', container: new Container());
+        
+        $executed = $console->execute(command: Mock\CommandWithDependency::class, input: [
+            'arg' => 'foo',
+            '--opt' => 'bar',
+        ]);
+            
+        $this->assertSame('command', $executed->command());
+        $this->assertSame(0, $executed->code());
+        $this->assertSame('arg:foo opt:bar', $executed->output());
+    }
+    
     public function testExecuteMethodWithCommandClassUsingSignature()
     {
         $console = new Console(name: 'app', container: new Container());
