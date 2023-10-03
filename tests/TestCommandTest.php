@@ -503,6 +503,26 @@ class TestCommandTest extends TestCase
         $test->execute();
     }
     
+    public function testExpectsOutputMixedMethods()
+    {
+        $command = (new Command(name: 'name'))
+            ->handle(function(InteractorInterface $io): int {
+                $io->write('lorem');
+                $io->write('ipsum');
+                $io->write('dolor');
+                return 0;
+            });
+        
+        $test = new TestCommand(command: $command);
+        $test->expectsOutput('lorem');
+        $test->expectsOutputToContain('lor');
+        $test->doesntExpectOutputToContain('foo');
+        $test->expectsOutput('ipsum');
+        $test->execute();
+        
+        $this->assertTrue(true);
+    }
+    
     public function testWithArgument()
     {
         $command = (new Command(name: 'name'))
