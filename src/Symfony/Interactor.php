@@ -50,6 +50,17 @@ class Interactor implements InteractorInterface
     }
     
     /**
+     * Returns true if argument exists, otherwise false.
+     *
+     * @param string $name
+     * @return bool
+     */
+    public function hasArgument(string $name): bool
+    {
+        return $this->input->hasArgument($name);
+    }
+    
+    /**
      * Returns the argument value by name.
      *
      * @param string $name
@@ -68,6 +79,17 @@ class Interactor implements InteractorInterface
     public function arguments(): array
     {
         return $this->input->getArguments();
+    }
+    
+    /**
+     * Returns true if option exists, otherwise false.
+     *
+     * @param string $name
+     * @return bool
+     */
+    public function hasOption(string $name): bool
+    {
+        return $this->input->hasOption($name);
     }
     
     /**
