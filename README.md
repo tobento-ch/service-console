@@ -430,11 +430,33 @@ $value = $io->argument(name: 'name');
 // all values indexed by the argument name:
 $values = $io->arguments();
 
+// returns true if argument exists, otherwise false.
+$has = $io->hasArgument(name: 'name');
+
 // Option(s):
 $value = $io->option(name: 'name');
 
 // all values indexed by the option name:
 $values = $io->options();
+
+// returns true if option exists, otherwise false.
+$has = $io->hasOption(name: 'name');
+```
+
+**Options with optional arguments**
+
+```php
+$value = $io->option(name: 'name');
+
+if (false === $value) {
+    // the option was not passed when running the command
+} elseif (null === $value) {
+    // the option was passed when running the command
+    // but no value was given to it
+} else {
+    // the option was passed when running the command and
+    // some specific value was given to it
+}
 ```
 
 ### Writing Output
