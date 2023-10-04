@@ -157,6 +157,134 @@ class ConsoleTest extends TestCase
         $this->assertSame(0, $executed->code());
         $this->assertSame('arg:foo opt:bar', $executed->output());
     }
+
+    public function testArgumentOptional()
+    {
+        $console = new Console(name: 'app', container: new Container());
+        
+        $command = (new Command(name: 'command'))
+            ->argument(
+                name: 'arg',
+                optional: true,
+            )
+            ->handle(function(InteractorInterface $io): int {
+                $value = $io->argument(name: 'arg');
+                $io->write(gettype($value).':'.$value);
+                return 0;
+            });
+
+        $executed = $console->execute(command: $command, input: []);
+        $this->assertSame('NULL:', $executed->output());
+        
+        $executed = $console->execute(command: $command, input: [
+            'arg' => 'foo',
+        ]);
+        $this->assertSame('string:foo', $executed->output());
+    }
+    
+    public function testArgumentVariadicFalse()
+    {
+        $console = new Console(name: 'app', container: new Container());
+        
+        $command = (new Command(name: 'command'))
+            ->argument(
+                name: 'arg',
+                variadic: true,
+            )
+            ->handle(function(InteractorInterface $io): int {
+                $value = $io->argument(name: 'arg');
+                $io->write(gettype($value).':'.$value);
+                return 0;
+            });
+        
+        $executed = $console->execute(command: $command, input: ['arg' => 'foo']);
+        $this->assertSame('string:foo', $executed->output());
+    }
+    
+    public function testArgumentVariadicTrue()
+    {
+        $console = new Console(name: 'app', container: new Container());
+        
+        $command = (new Command(name: 'command'))
+            ->argument(
+                name: 'arg',
+                variadic: true,
+            )
+            ->handle(function(InteractorInterface $io): int {
+                $value = $io->argument(name: 'arg');
+                $io->write(gettype($value).':'.implode(',', $value));
+                return 0;
+            });
+        
+        $executed = $console->execute(command: $command, input: ['arg' => ['foo', 'bar']]);
+        $this->assertSame('array:foo,bar', $executed->output());
+    }
+    
+    public function testOptionVariadicNull()
+    {
+        $console = new Console(name: 'app', container: new Container());
+        
+        $command = (new Command(name: 'command'))
+            ->option(
+                name: 'opt',
+                variadic: null,
+            )
+            ->handle(function(InteractorInterface $io): int {
+                $value = $io->option(name: 'opt');
+                $io->write(gettype($value).':'.$value);
+                return 0;
+            });
+
+        $executed = $console->execute(command: $command, input: []);
+        $this->assertSame('boolean:', $executed->output());
+        
+        $executed = $console->execute(command: $command, input: ['--opt' => null]);
+        $this->assertSame('boolean:1', $executed->output());
+    }
+    
+    public function testOptionVariadicFalse()
+    {
+        $console = new Console(name: 'app', container: new Container());
+        
+        $command = (new Command(name: 'command'))
+            ->option(
+                name: 'opt',
+                variadic: false,
+            )
+            ->handle(function(InteractorInterface $io): int {
+                $value = $io->option(name: 'opt');
+                $io->write(gettype($value).':'.$value);
+                return 0;
+            });
+
+        $executed = $console->execute(command: $command, input: []);
+        $this->assertSame('NULL:', $executed->output());
+        
+        $executed = $console->execute(command: $command, input: ['--opt' => 'value']);
+        $this->assertSame('string:value', $executed->output());
+    }
+    
+    public function testOptionVariadicTrue()
+    {
+        $console = new Console(name: 'app', container: new Container());
+        
+        $command = (new Command(name: 'command'))
+            ->option(
+                name: 'opt',
+                variadic: true,
+            )
+            ->handle(function(InteractorInterface $io): int {
+                $value = $io->option(name: 'opt');
+                $io->write(gettype($value).':'.implode(',', $value));
+                return 0;
+            });
+
+        $executed = $console->execute(command: $command, input: []);
+        $this->assertSame('array:', $executed->output());
+        
+        $executed = $console->execute(command: $command, input: ['--opt' => ['foo', 'bar']]);
+        $this->assertSame('array:foo,bar', $executed->output());
+    }    
     
     public function testEvents()
     {
