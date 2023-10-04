@@ -430,33 +430,42 @@ $value = $io->argument(name: 'name');
 // all values indexed by the argument name:
 $values = $io->arguments();
 
-// returns true if argument exists, otherwise false.
-$has = $io->hasArgument(name: 'name');
-
 // Option(s):
 $value = $io->option(name: 'name');
 
 // all values indexed by the option name:
 $values = $io->options();
-
-// returns true if option exists, otherwise false.
-$has = $io->hasOption(name: 'name');
 ```
 
-**Options with optional arguments**
+**Argument details**
 
 ```php
-$value = $io->option(name: 'name');
+// Argument with variadic: false
+$value = $io->argument(name: 'name');
+// NULL, if the argument was not passed when running the command
+// Not NULL, if the argument was passed when running the command
 
-if (false === $value) {
-    // the option was not passed when running the command
-} elseif (null === $value) {
-    // the option was passed when running the command
-    // but no value was given to it
-} else {
-    // the option was passed when running the command and
-    // some specific value was given to it
-}
+// Argument with variadic: true
+$value = $io->argument(name: 'name');
+// Array empty if the argument was not passed when running the command
+```
+
+**Option details**
+
+```php
+// Option with variadic: null
+$value = $io->option(name: 'name');
+// bool(false), if the option was not passed when running the command
+// bool(true), if the option was passed when running the command
+
+// Option with variadic: false
+$value = $io->option(name: 'name');
+// NULL, if the option was not passed when running the command
+// Not NULL, if the option was passed when running the command
+
+// Option with variadic: true
+$value = $io->option(name: 'name');
+// Array, empty if the option was not passed when running the command
 ```
 
 ### Writing Output
@@ -676,6 +685,10 @@ class SampleCommandTest extends TestCase
                 
                 // with array value:
                 '--some-option' => ['value'],
+                
+                // pass null for options with variadic: null
+                '--some-option' => null,
+                
             ],
         ))
         // set expectations:
