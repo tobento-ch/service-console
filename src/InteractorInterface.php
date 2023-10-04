@@ -21,14 +21,6 @@ use Stringable;
 interface InteractorInterface
 {
     /**
-     * Returns true if argument exists, otherwise false.
-     *
-     * @param string $name
-     * @return bool
-     */
-    public function hasArgument(string $name): bool;
-    
-    /**
      * Returns the argument value by name.
      *
      * @param string $name
@@ -42,14 +34,6 @@ interface InteractorInterface
      * @return array
      */
     public function arguments(): array;
-
-    /**
-     * Returns true if option exists, otherwise false.
-     *
-     * @param string $name
-     * @return bool
-     */
-    public function hasOption(string $name): bool;
     
     /**
      * Returns the option value by name.
