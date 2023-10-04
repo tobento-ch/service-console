@@ -199,7 +199,7 @@ class SignatureParser
                 name: $token,
                 shortName: $shortName,
                 description: $description,
-                variadic: false,
+                variadic: null,
             ),
         };
     }
