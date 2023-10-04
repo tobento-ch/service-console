@@ -191,7 +191,7 @@ class SignatureParserTest extends TestCase
         $this->assertNull($params->first()->shortName());
         $this->assertSame('', $params->first()->description());
         $this->assertNull($params->first()->value());
-        $this->assertFalse($params->first()->variadic());
+        $this->assertNull($params->first()->variadic());
         
         $params = SignatureParser::parameters('command {--o|option}');
         $this->assertSame('option', $params->first()->name());
@@ -234,7 +234,7 @@ class SignatureParserTest extends TestCase
         $this->assertNull($params->first()->shortName());
         $this->assertSame('desc', $params->first()->description());
         $this->assertNull($params->first()->value());
-        $this->assertFalse($params->first()->variadic());
+        $this->assertNull($params->first()->variadic());
         
         $params = SignatureParser::parameters('command {--o|option : desc}');
         $this->assertSame('option', $params->first()->name());
