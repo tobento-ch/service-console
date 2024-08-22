@@ -20,10 +20,13 @@ Command Line Interface using [Symfony Console](https://github.com/symfony/consol
             - [Using Signature](#using-signature)
     - [Interactor](#interactor)
         - [Retrieving Argument and Option Values](#retrieving-argument-and-option-values)
+        - [Retrieving Raw Input](#retrieving-raw-input)
         - [Writing Output](#writing-output)
         - [Asking Questions](#asking-questions)
         - [Progress Bar](#progress-bar)
         - [Verbosity Levels](#verbosity-levels)
+    - [Command Parameters](#command-parameters)
+        - [Ignore Validation Errors Parameter](#ignore-validation-errors-parameter)
     - [Locking](#locking)
     - [Signals](#signals)
     - [Events](#events)
@@ -102,7 +105,7 @@ use Tobento\Service\Console\ExecutedInterface;
 $executed = $console->execute(
     command: SampleCommand::class,
     
-    // passing arguments and options:
+    // passing arguments and options as array:
     input: [
         // passing arguments:
         'username' => 'Tom',
@@ -115,7 +118,10 @@ $executed = $console->execute(
 
         // with array value:
         '--some-option' => ['value'],
-    ]
+    ],
+    
+    // or you may pass the command, arguments and options as string
+    input: 'command:name Tom --bar=1'
 );
 
 var_dump($executed instanceof ExecutedInterface);
@@ -468,6 +474,22 @@ $value = $io->option(name: 'name');
 // Array, empty if the option was not passed when running the command
 ```
 
+### Retrieving Raw Input
+
+You may use the ```rawInput``` method to retrieve the raw input that was passed to the command.
+
+```php
+// if this command was run as:
+// php ap command:name foo --bar --baz=1
+
+$rawInput = $io->rawInput();
+// ['command:name', 'foo', '--bar', '--baz=1']
+
+// you may exclude the command name:
+$rawInput = $io->rawInput(withoutCommandName: false);
+// ['foo', '--bar', '--baz=1']
+```
+
 ### Writing Output
 
 ```php
@@ -600,6 +622,26 @@ if ($io->isVerbose('vv')) {
 $io->write('Some Text', 'v');
 $io->write('Some Text', 'vv');
 $io->write('Some Text', 'vvv');
+```
+
+## Command Parameters
+
+### Ignore Validation Errors Parameter
+
+You may add the ```IgnoreValidationErrors``` parameter to ignore validation errors which may be useful in some cases.
+
+```php
+use Tobento\Service\Console\Command;
+use Tobento\Service\Console\InteractorInterface;
+use Tobento\Service\Console\Parameter;
+
+$command = (new Command(name: 'mail:send'))
+    ->parameter(new Parameter\IgnoreValidationErrors());
+    
+    // handle the command:
+    ->handle(function(InteractorInterface $io): int {
+        return Command::SUCCESS;
+    });
 ```
 
 ## Locking
