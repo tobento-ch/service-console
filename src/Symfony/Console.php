@@ -27,6 +27,7 @@ use Tobento\Service\Autowire\AutowireException;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Command\LazyCommand;
 use Symfony\Component\Console\Input\ArrayInput;
+use Symfony\Component\Console\Input\StringInput;
 use Symfony\Component\Console\Output\BufferedOutput;
 use Closure;
 use Throwable;
@@ -220,19 +221,32 @@ class Console implements ConsoleInterface
      * Execute a command.
      *
      * @param string|CommandInterface $command A command name, classname or class instance.
-     * @param array $input
+     * @param string|array $input
+     *   String: 'command:name arguments --options'
      *   arguments: ['username' => 'Tom'] or ['username' => ['Tom', 'Tim']]
      *   options: ['--some-option' => 'value'] or ['--some-option' => ['value']]
      * @return ExecutedInterface
      * @throws ConsoleException
      */
-    public function execute(string|CommandInterface $command, array $input = []): ExecutedInterface
+    public function execute(string|CommandInterface $command, string|array $input = []): ExecutedInterface
     {
         if (is_string($command) && $this->hasCommand($command)) {
+            $commandName = $command;
+        } elseif (is_string($command) && !class_exists($command)) {
             $commandName = $command;
         } else {
             $this->addCommand($command);
             $commandName = $this->createCommand($command)->getName();
+        }
+        
+        if (is_string($input)) {
+            try {
+                $output = new BufferedOutput();
+                $code = $this->app()->run(new StringInput($input), $output);
+                return new Executed(command: $commandName, code: $code, output: $output);
+            } catch (Throwable $e) {
+                throw new ConsoleException($e->getMessage(), (int)$e->getCode(), $e);
+            }
         }
         
         $input = array_merge(['command' => $commandName], $input);
