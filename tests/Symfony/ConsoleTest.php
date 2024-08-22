@@ -19,14 +19,15 @@ use Tobento\Service\Console\ConsoleInterface;
 use Tobento\Service\Console\CommandInterface;
 use Tobento\Service\Console\InteractorInterface;
 use Tobento\Service\Console\Command;
-use Tobento\Service\Console\Event;
-use Tobento\Service\Console\ConsoleException;
-use Tobento\Service\Console\InvalidCommandException;
 use Tobento\Service\Console\CommandNotFoundException;
+use Tobento\Service\Console\ConsoleException;
+use Tobento\Service\Console\Event;
+use Tobento\Service\Console\InvalidCommandException;
+use Tobento\Service\Console\Parameter;
 use Tobento\Service\Console\Test\Mock;
 use Tobento\Service\Container\Container;
-use Tobento\Service\Event\Events;
 use Tobento\Service\Collection\Collection;
+use Tobento\Service\Event\Events;
 use Psr\EventDispatcher\EventDispatcherInterface;
 
 class ConsoleTest extends TestCase
@@ -157,6 +158,30 @@ class ConsoleTest extends TestCase
         $this->assertSame(0, $executed->code());
         $this->assertSame('arg:foo opt:bar', $executed->output());
     }
+    
+    public function testExecuteMethodWithStringInput()
+    {
+        $console = new Console(name: 'app', container: new Container());
+        $console->addCommand(Mock\Command::class);
+        
+        $executed = $console->execute(command: 'command', input: 'command foo --opt=bar');
+            
+        $this->assertSame('command', $executed->command());
+        $this->assertSame(0, $executed->code());
+        $this->assertSame('arg:foo opt:bar', $executed->output());
+    }
+    
+    public function testExecuteMethodWithHelpCommand()
+    {
+        $console = new Console(name: 'app', container: new Container());
+        $console->addCommand(Mock\Command::class);
+        
+        $executed = $console->execute(command: 'help', input: 'help');
+            
+        $this->assertSame('help', $executed->command());
+        $this->assertSame(0, $executed->code());
+        $this->assertStringContainsString('Description', $executed->output());
+    }
 
     public function testArgumentOptional()
     {
@@ -284,7 +309,53 @@ class ConsoleTest extends TestCase
         
         $executed = $console->execute(command: $command, input: ['--opt' => ['foo', 'bar']]);
         $this->assertSame('array:foo,bar', $executed->output());
-    }    
+    }
+    
+    public function testIoRawInputWithStringInput()
+    {
+        $console = new Console(name: 'app', container: new Container());
+        
+        $command = (new Command(name: 'command:name'))
+            ->argument(
+                name: 'arg',
+            )    
+            ->option(
+                name: 'opt',
+                variadic: false,
+            )
+            ->handle(function(InteractorInterface $io): int {
+                $io->write(implode(',', $io->rawInput()));
+                return 0;
+            });
+
+        $executed = $console->execute(command: $command, input: 'command:name foo --opt=bar');
+        $this->assertSame('command:name,foo,--opt=bar', $executed->output());
+    }
+    
+    public function testCommandWithIgnoringValidationErrors()
+    {
+        $console = new Console(name: 'app', container: new Container());
+        
+        $command = (new Command(name: 'command:name'))
+            ->handle(function(InteractorInterface $io): int {
+                return 0;
+            });
+        
+        $exceptionThrown = false;
+        
+        try {
+            $console->execute(command: $command, input: ['--invalid' => 'value']);
+        } catch (ConsoleException $e) {
+            $exceptionThrown = true;
+        }
+        
+        $this->assertTrue($exceptionThrown);
+        
+        $command->parameter(new Parameter\IgnoreValidationErrors());
+
+        $executed = $console->execute(command: $command, input: ['--invalid' => 'value']);
+        $this->assertSame(0, $executed->code());
+    }
     
     public function testEvents()
     {
