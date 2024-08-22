@@ -21,6 +21,14 @@ use Stringable;
 interface InteractorInterface
 {
     /**
+     * Returns the raw input.
+     *
+     * @param bool $withoutCommandName
+     * @return array
+     */
+    public function rawInput(bool $withoutCommandName = false): array;
+    
+    /**
      * Returns the argument value by name.
      *
      * @param string $name
