@@ -19,6 +19,7 @@ use Tobento\Service\Console\CommandInterface;
 use Tobento\Service\Console\Input\Argument;
 use Tobento\Service\Console\Input\Option;
 use Tobento\Service\Console\Event;
+use Tobento\Service\Console\Parameter;
 use Tobento\Service\Autowire\Autowire;
 use Tobento\Service\Autowire\AutowireException;
 use Symfony\Component\Console\Command\Command as SymfonyCommand;
@@ -58,6 +59,10 @@ class Command extends SymfonyCommand
         $this->mapArguments();
         $this->mapOptions();
         $this->setHelp($this->command->getUsage());
+        
+        if ($this->command->parameters()->get(Parameter\IgnoreValidationErrors::class)) {
+            $this->ignoreValidationErrors();
+        }
     }
     
     public function interactorFactory(Closure $factory): static
