@@ -62,11 +62,12 @@ interface ConsoleInterface
      * Execute a command.
      *
      * @param string|CommandInterface $command A command name, classname or class instance.
-     * @param array $input
+     * @param string|array $input
+     *   String: 'command:name arguments --options'
      *   arguments: ['username' => 'Tom'] or ['username' => ['Tom', 'Tim']]
      *   options: ['--some-option' => 'value'] or ['--some-option' => ['value']]
      * @return ExecutedInterface
      * @throws ConsoleException
      */
-    public function execute(string|CommandInterface $command, array $input = []): ExecutedInterface;
+    public function execute(string|CommandInterface $command, string|array $input = []): ExecutedInterface;
 }
