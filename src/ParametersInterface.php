@@ -16,7 +16,7 @@ namespace Tobento\Service\Console;
 use IteratorAggregate;
 
 /**
- * ParametersInterface
+ * @extends IteratorAggregate<int, ParameterInterface>
  */
 interface ParametersInterface extends IteratorAggregate
 {
