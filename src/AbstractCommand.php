@@ -98,6 +98,8 @@ abstract class AbstractCommand implements CommandInterface
      * Returns the handler.
      *
      * @return callable
+     * @psalm-suppress InvalidReturnType
+     * @psalm-suppress InvalidReturnStatement
      */
     public function getHandler(): callable
     {
