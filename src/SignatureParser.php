@@ -213,6 +213,10 @@ class SignatureParser
     private static function extractTokenAndDescription(string $token): array
     {
         $parts = preg_split('/\s+:\s+/', trim($token), 2);
+        
+        if ($parts === false) {
+            return [];
+        }
 
         return count($parts) === 2 ? $parts : [$token, ''];
     }
