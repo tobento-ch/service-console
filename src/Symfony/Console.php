@@ -192,7 +192,7 @@ class Console implements ConsoleInterface
         try {
             $command = (new Autowire($this->container))->resolve($command);
         } catch (AutowireException $e) {
-            throw new InvalidCommandException($command, $e->getMessage(), (int)$e->getCode(), $e);
+            throw new InvalidCommandException($command, $e->getMessage(), $e->getCode(), $e);
         }
         
         if ($command instanceof CommandInterface) {
