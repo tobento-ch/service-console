@@ -37,6 +37,8 @@ class TestSymfonyCommand
     
     protected array $collectedQuestions = [];
     
+    protected null|int $exitCode = null;
+    
     /**
      * Create a new TestSymfonyCommand.
      *
