@@ -85,7 +85,7 @@ class Command extends SymfonyCommand
      *
      * @see setCode()
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         // ToDo: check if command is locked
         
@@ -111,6 +111,7 @@ class Command extends SymfonyCommand
      * Map arguments.
      *
      * @return void
+     * @psalm-suppress UndefinedInterfaceMethod
      */
     protected function mapArguments(): void
     {
@@ -149,6 +150,7 @@ class Command extends SymfonyCommand
      * Map options.
      *
      * @return void
+     * @psalm-suppress UndefinedInterfaceMethod
      */
     protected function mapOptions(): void
     {
