@@ -47,7 +47,7 @@ composer require tobento/service-console
 
 ## Requirements
 
-- PHP 8.0 or greater
+- PHP 8.4 or greater
 
 ## Highlights
 
@@ -138,7 +138,7 @@ $output = $executed->output(); // string
 use Tobento\Service\Console\Command;
 use Tobento\Service\Console\InteractorInterface;
 
-$command = (new Command(name: 'name'))
+$command = new Command(name: 'name')
     ->handle(function(InteractorInterface $io): int {
         // do sth:
         return 0;
@@ -166,7 +166,7 @@ use Tobento\Service\Console\Command;
 use Tobento\Service\Console\CommandInterface;
 use Tobento\Service\Console\InteractorInterface;
 
-$command = (new Command(name: 'mail:send'))
+$command = new Command(name: 'mail:send')
     // you may set a description:
     ->description('Send an email to a user(s)')
     
@@ -219,7 +219,7 @@ Check out the [Interactor](#interactor) section to learn more about it.
 ```php
 use Tobento\Service\Console\Command;
 
-$command = (new Command(name: 'sample'))
+$command = new Command(name: 'sample')
     ->argument(
         // The name of the argument:
         name: 'name',
@@ -246,7 +246,7 @@ $command = (new Command(name: 'sample'))
 ```php
 use Tobento\Service\Console\Command;
 
-$command = (new Command(name: 'sample'))
+$command = new Command(name: 'sample')
     ->option(
         // The name of the option:
         name: 'name',
@@ -416,7 +416,7 @@ The interactor let you interact with the input and output from the console while
 use Tobento\Service\Console\Command;
 use Tobento\Service\Console\InteractorInterface;
 
-$command = (new Command(name: 'mail:send'))
+$command = new Command(name: 'mail:send')
     // handle the command:
     ->handle(function(InteractorInterface $io): int {
         // ...
@@ -635,7 +635,7 @@ use Tobento\Service\Console\Command;
 use Tobento\Service\Console\InteractorInterface;
 use Tobento\Service\Console\Parameter;
 
-$command = (new Command(name: 'mail:send'))
+$command = new Command(name: 'mail:send')
     ->parameter(new Parameter\IgnoreValidationErrors());
     
     // handle the command:
@@ -675,7 +675,7 @@ class SampleCommandTest extends TestCase
 {
     public function testCommand()
     {
-        (new TestCommand(command: SampleCommand::class))
+        new TestCommand(command: SampleCommand::class)
             // output expectations:
             ->expectsOutput('lorem')
             ->doesntExpectOutput('ipsum')
@@ -713,7 +713,7 @@ class SampleCommandTest extends TestCase
 {
     public function testCommand()
     {
-        (new TestCommand(
+        new TestCommand(
             command: SampleCommand::class, // string|CommandInterface
             input: [
                 // passing arguments:
@@ -732,7 +732,7 @@ class SampleCommandTest extends TestCase
                 '--some-option' => null,
                 
             ],
-        ))
+        )
         // set expectations:
         ->expectsOutput('lorem')
         ->expectsExitCode(0)
@@ -755,7 +755,7 @@ class SampleCommandTest extends TestCase
 {
     public function testCommand()
     {
-        (new TestCommand(command: SampleCommand::class))
+        new TestCommand(command: SampleCommand::class)
             ->expectsExitCode(0)
             
             // if no dependencies
