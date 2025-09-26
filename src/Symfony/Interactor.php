@@ -15,10 +15,8 @@ namespace Tobento\Service\Console\Symfony;
 
 use Tobento\Service\Console\InteractorInterface;
 use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Input\ArgvInput;
 use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\StringInput;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\Console\Question\Question;
@@ -26,7 +24,7 @@ use Symfony\Component\Console\Question\ChoiceQuestion;
 use Stringable;
 
 /**
- * Interactor
+ * @psalm-suppress PossiblyUnusedProperty
  */
 class Interactor implements InteractorInterface
 {
@@ -60,43 +58,11 @@ class Interactor implements InteractorInterface
      */
     public function rawInput(bool $withoutCommandName = false): array
     {
-        // since console 7.1
-        // return $this->input->getRawTokens($withoutCommandName);
-        
-        if ($this->input instanceof StringInput) {
-            $r = new \ReflectionClass(ArgvInput::class);
-            $p = $r->getProperty('tokens');
-            $p->setAccessible(true);
-            $tokens = $p->getValue($this->input);
-        } elseif ($this->input instanceof ArgvInput) {
-            $r = new \ReflectionObject($this->input);
-            $p = $r->getProperty('tokens');
-            $p->setAccessible(true);
-            $tokens = $p->getValue($this->input);
-        } elseif ($this->input instanceof ArrayInput) {
-            return []; // not supported!
-        } else {
-            return [];
+        if ($this->input instanceof ArgvInput) {
+            return $this->input->getRawTokens($withoutCommandName);
         }
         
-        if (!$withoutCommandName) {
-            return $tokens;
-        }
-        
-        $parameters = [];
-        $keep = false;
-        foreach ($tokens as $value) {
-            if (!$keep && $value === $this->input->getFirstArgument()) {
-                $keep = true;
-
-                continue;
-            }
-            if ($keep) {
-                $parameters[] = $value;
-            }
-        }
-
-        return $parameters;
+        return [];
     }
     
     /**
